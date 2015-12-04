@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shorten -- Shooter</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+    <link rel='stylesheet' href='/stylesheets/docs.css' />
+	<script src="/javascripts/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript">
+	  function postURL (){
+	     $('#error').hide();
+	     $('#success').hide();
+	     var url = $('#url').val();
+	     $('#url').val ('');
+	     if(!/^(http|ftp|https).*/.test(url)){
+	         $('#error').html("URL must starts with http/https/ftp.Only these protocols are supported.");
+	         $('#error').show(0.5);
+	         return;
+	     }
+	     $.post ("/link/add", {'url':url}, function (resp){
+	         if (resp.error){
+	           $('#error').html(resp.error);
+	           $('#error').show(0.5);
+	         }else{
+               $('#success').html("<a target='_blank' href='" + resp.result+ "'>" + resp.result + "</a>");
+	           $('#success').show(0.5);
+	         }
+         });
+	     return false;
+	  }
+	</script>
+  </head>
+  <body>
+	<div class="container">
+	  <form onsubmit="return false;">
+		<fieldset>
+		  <legend>Shorten</legend>
+		  <label>URL</label>
+		  <input name= "url" id= "url" type="text" class= "span8" placeholder="Type url starts with http/https/ftp...">
+		  <button type="submit" class="btn" onclick='postURL();'>Submit</button>
+		</fieldset>
+	  </form>
+	  <div id='error' class="alert alert-error" style='display:none'>
+		<% if (locals.error){ %>
+		<%= error %>
+		<% } %>
+	  </div>
+	  <div class="alert alert-success" style='display:none' id='success'>
+	  </div>
+	</div>
+	<br />
+	<br />
+	<br />
+	<div class='container' style='width:50%'>
+	<table class='table table-hover'> 
+	  <caption><h5>Top 10 hot links in 24 hours</h5></caption>
+	  <tbody>
+		<% if (locals.links){ %>
+    		<% links.forEach (function (e){ %>
+	    	<tr>
+		      <td><a href='<%= e %>' target='_blank'><%= e %></a></td>
+    		</tr>
+	    	<% }); %>
+		<% } %>
+	  </tbody>
+	</table>
+	</div> 
+	<script type="text/javascript">
+	  <% if (locals.error) { %>
+	  $('#error').show(0.5);
+      <% } %>
+	</script>
+	 <footer class="footer">
+      <div class="container">
+		 <p>Powered by node.js and express.js</p>
+		 <ul class="footer-links">
+          <li><a href="http://fnil.net">About me</a></li>
+          <li class="muted">&middot;</li>
+          <li><a href="http://nodejs.org">Node.js</a></li>
+          <li class="muted">&middot;</li>
+          <li><a href="http://expressjs.com">Express.js</a></li>
+          <li class="muted">&middot;</li>
+          <li><a href="https://github.com/killme2008/node-shorten">Node shorten</a></li>
+          <li class="muted">&middot;</li>
+          <li><a href="http://fnil.me/aaaaa6">Chrome extension</a></li>
+        </ul>
+	  </div>
+    </footer>
+	<div>
+  </body>
+</html>
